@@ -1,26 +1,56 @@
 let functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp(functions.config().firebase);
 functions = functions.region("europe-west1");
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
+
+exports.changeSquare = functions.https.onCall((data, context) => {
+  if (!context.auth)
+    return { status: "error", code: 401, message: "Not signed in" };
+
+  const { color, id, boardId } = data;
+  // Authentication / user information is automatically added to the request.
+  const uid = context.auth.uid;
+
+  const action = {
+    boardId: boardId,
+    squareId: id,
+    color: color,
+    time: new Date(),
+  };
+
+  const userActionsRef = admin.firestore().collection("user-actions").doc(uid); // get the user actions from firestore
+  // add the action to the array of actions
+  userActionsRef.update({
+    actions: admin.firestore.FieldValue.arrayUnion(action),
+  });
+
+  admin.database().ref(`board${boardId}/${id}`).set({ color, id }); // update the pixel
+
+  return { status: "ok", code: 200 };
 });
 
-exports.makeUppercase = functions.firestore
-  .document("/messages/{documentId}")
-  .onCreate((snap, context) => {
-    // Grab the current value of what was written to Firestore.
-    const original = snap.data().original;
+exports.resetBoard = functions.https.onCall((data, context) => {
+  if (!context.auth || context.auth.uid !== "gtfpqsy1DLhy4AEndnsppYFFeH22")
+    return { status: "error", code: 401, message: "Not signed in" };
+  // hardcoded to just me for now
 
-    // Access the parameter `{documentId}` with `context.params`
-    functions.logger.log("Uppercasing", context.params.documentId, original);
+  const { boardId, width, height } = data;
+  // Authentication / user information is automatically added to the request.
+  const board = {};
+  for (let index = 0; index < width * height; index++) {
+    board[index] = { id: index, color: "#ffffff" };
+  }
 
-    const uppercase = original.toUpperCase();
+  admin.database().ref(`board${boardId}/`).set(board); // update the entire board
 
-    // You must return a Promise when performing asynchronous tasks inside a Functions such as
-    // writing to Firestore.
-    // Setting an 'uppercase' field in Firestore document returns a Promise.
-    return snap.ref.set({ uppercase }, { merge: true });
-  });
+  return { status: "ok", code: 200 };
+});
+
+exports.createProfile = functions.auth.user().onCreate((user) => {
+  const userObject = { actions: [] };
+
+  return admin
+    .firestore()
+    .doc("user-actions/" + user.uid)
+    .set(userObject);
+});
