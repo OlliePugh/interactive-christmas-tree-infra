@@ -61,7 +61,7 @@ exports.changeSquare = functions.https.onCall(async (data, context) => {
   }
 
   // add the action to the array of actions
-  admin.database().ref(`board${boardId}/${id}`).set({ color, id }); // update the pixel
+  admin.database().ref(`board${boardId}/data/${id}`).set({ color, id }); // update the pixel
   return { status: "ok", code: 200 };
 });
 
@@ -72,9 +72,15 @@ exports.resetBoard = functions.https.onCall((data, context) => {
 
   const { boardId, width, height } = data;
   // Authentication / user information is automatically added to the request.
-  const board = {};
+  const board = {
+    metadata: {
+      height: height,
+      width: width,
+    },
+    data: {},
+  };
   for (let index = 0; index < width * height; index++) {
-    board[index] = { id: index, color: "#ffffff" };
+    board.data[index] = { id: index, color: "#ffffff" };
   }
 
   admin.database().ref(`board${boardId}/`).set(board); // update the entire board
