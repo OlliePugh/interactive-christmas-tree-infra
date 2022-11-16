@@ -5,12 +5,13 @@
     "tasks": [
       {
         "label": "Start Emulator",
-        "type": "shell",   
+        "type": "shell",
         "command": "firebase emulators:start --import emulator-data --export-on-exit",
         "group": {
           "kind": "none",
           "isDefault": false
-        }
-      },
+        },
+        "problemMatcher": []
+      }
     ]
   }
