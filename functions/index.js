@@ -3,6 +3,7 @@ const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
 const config = require("./config.js");
 functions = functions.region("europe-west1");
+const hasCoolDownFinished = require("./has-cool-down-finished/index.js");
 
 exports.changeSquare = functions.https.onCall(async (data, context) => {
   if (!context.auth)
@@ -20,41 +21,8 @@ exports.changeSquare = functions.https.onCall(async (data, context) => {
   };
 
   console.log("Starting transaction");
-  const userDocRef = admin.firestore().collection("user-actions").doc(uid);
   try {
-    await admin.firestore().runTransaction(async (transaction) => {
-      const userActionsDoc = await transaction.get(userDocRef);
-
-      if (!userActionsDoc.exists) {
-        throw "Document does not exist!";
-      }
-      console.log("newAction", JSON.stringify(action));
-      const sortedActions = userActionsDoc
-        .data()
-        .actions.filter((act) => act.boardId === boardId);
-
-      const mostRecentAction = sortedActions[sortedActions.length - 1];
-      console.log("mostRecentAction", JSON.stringify(mostRecentAction));
-
-      if (mostRecentAction) {
-        // if its not null
-        const timeDelta =
-          new Date().getTime() -
-          new Date(mostRecentAction.time.seconds * 1000).getTime();
-
-        console.log("Time Delta", timeDelta);
-
-        if (timeDelta < config.modifierCooldown) {
-          return Promise.reject("cooldown");
-        }
-      }
-
-      // been over a minute let the user place it again
-      console.log("Adding new action to the list of actions");
-      await transaction.update(userDocRef, {
-        actions: admin.firestore.FieldValue.arrayUnion(action),
-      });
-    });
+    hasCoolDownFinished({ admin, action, uid });
   } catch (e) {
     console.error(e);
     return { status: "too-many", code: 429 };
@@ -85,6 +53,60 @@ exports.resetBoard = functions.https.onCall((data, context) => {
 
   admin.database().ref(`board${boardId}/`).set(board); // update the entire board
 
+  return { status: "ok", code: 200 };
+});
+
+exports.resetLights = functions.https.onCall((data, context) => {
+  if (!context.auth || context.auth.uid !== "gtfpqsy1DLhy4AEndnsppYFFeH22")
+    return { status: "error", code: 401, message: "Not signed in" };
+  // hardcoded to just me for now
+
+  const { length } = data;
+  // Authentication / user information is automatically added to the request.
+  const lights = {
+    metadata: {
+      length,
+    },
+    data: {},
+  };
+  for (let index = 0; index < length; index++) {
+    lights.data[index] = "#ffffff";
+  }
+
+  admin.database().ref(`lights/`).set(lights); // update the entire board
+
+  return { status: "ok", code: 200 };
+});
+
+exports.changeLight = functions.https.onCall(async (data, context) => {
+  if (!context.auth)
+    return { status: "error", code: 401, message: "Not signed in" };
+
+  const { color, id } = data;
+  // Authentication / user information is automatically added to the request.
+  const uid = context.auth.uid;
+
+  const action = {
+    boardId: 0,
+    squareId: id,
+    color: color,
+    time: new Date(),
+  };
+
+  console.log("Starting transaction");
+  try {
+    await hasCoolDownFinished({
+      admin,
+      action,
+      uid,
+      modifierCooldown: config.modifierCooldown,
+    });
+  } catch (e) {
+    console.error(e);
+    return { status: "too-many", code: 429 }; // cooldown has not finished
+  }
+
+  admin.database().ref(`lights/data/${id}`).set(color); // update the pixel
   return { status: "ok", code: 200 };
 });
 
