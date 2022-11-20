@@ -4,6 +4,7 @@ admin.initializeApp(functions.config().firebase);
 const config = require("./config.js");
 functions = functions.region("europe-west1");
 const hasCoolDownFinished = require("./has-cool-down-finished/index.js");
+const getBaubleBmp = require("./get-bauble-bmp");
 
 exports.changeSquare = functions.https.onCall(async (data, context) => {
   if (!context.auth)
@@ -117,4 +118,36 @@ exports.createProfile = functions.auth.user().onCreate((user) => {
     .firestore()
     .doc("user-actions/" + user.uid)
     .set(userObject);
+});
+
+const _createCacheLights = async () => {
+  const snapshot = await admin.database().ref(`lights/data`).once("value");
+  const data = snapshot.val();
+
+  const bucket = admin.storage().bucket();
+  try {
+    await bucket.file("lights.json").save(JSON.stringify(data));
+  } catch (e) {
+    console.log(e);
+    console.log("File upload failed");
+  }
+};
+
+exports.createCacheLights = functions.pubsub.schedule("* * * * *").onRun(() => {
+  _createCacheLights();
+});
+
+// exports.testCreateCacheLights = functions.https.onRequest(async (req, res) => {
+//   _createCacheLights();
+//   res.sendStatus(200);
+// });
+
+exports.baubleBmpCronJob = functions.pubsub.schedule("* * * * *").onRun(() => {
+  getBaubleBmp();
+});
+
+exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
+  const byteResult = await getBaubleBmp({ admin, boardId: req.query.id });
+  console.log(byteResult);
+  res.sendStatus(200);
 });
