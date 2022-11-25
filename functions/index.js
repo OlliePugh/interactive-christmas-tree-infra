@@ -5,6 +5,8 @@ const config = require("./config.js");
 functions = functions.region("europe-west1");
 const hasCoolDownFinished = require("./has-cool-down-finished/index.js");
 const getBaubleBmp = require("./get-bauble-bmp");
+const secrets = require("./secrets.js");
+const axios = require("axios");
 
 exports.changeSquare = functions.https.onCall(async (data, context) => {
   if (!context.auth)
@@ -106,7 +108,9 @@ exports.changeLight = functions.https.onCall(async (data, context) => {
     console.error(e);
     return { status: "too-many", code: 429 }; // cooldown has not finished
   }
-
+  axios.get(`${secrets.lightsIp}?bulb-id=${id}&colour=${colour.substring(1)}`, {
+    headers: { Authorization: secrets.lightsApiKey },
+  });
   admin.database().ref(`lights/data/${id}`).set(colour); // update the pixel
   return { status: "ok", code: 200 };
 });
@@ -133,18 +137,18 @@ const _createCacheLights = async () => {
   }
 };
 
-exports.createCacheLights = functions.pubsub.schedule("* * * * *").onRun(() => {
-  _createCacheLights();
-});
+// exports.createCacheLights = functions.pubsub.schedule("* * * * *").onRun(() => {
+//   _createCacheLights();
+// });
 
 // exports.testCreateCacheLights = functions.https.onRequest(async (req, res) => {
 //   _createCacheLights();
 //   res.sendStatus(200);
 // });
 
-exports.baubleBmpCronJob = functions.pubsub.schedule("* * * * *").onRun(() => {
-  getBaubleBmp();
-});
+// exports.baubleBmpCronJob = functions.pubsub.schedule("* * * * *").onRun(() => {
+//   getBaubleBmp();
+// });
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
   const byteResult = await getBaubleBmp({ admin, boardId: req.query.id });
