@@ -10,14 +10,14 @@ exports.changeSquare = functions.https.onCall(async (data, context) => {
   if (!context.auth)
     return { status: "error", code: 401, message: "Not signed in" };
 
-  const { color, id, boardId } = data;
+  const { colour, id, boardId } = data;
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid;
 
   const action = {
     boardId: boardId,
     squareId: id,
-    color: color,
+    colour: colour,
     time: new Date(),
   };
 
@@ -30,7 +30,7 @@ exports.changeSquare = functions.https.onCall(async (data, context) => {
   }
 
   // add the action to the array of actions
-  admin.database().ref(`board${boardId}/data/${id}`).set({ color, id }); // update the pixel
+  admin.database().ref(`board${boardId}/data/${id}`).set({ colour, id }); // update the pixel
   return { status: "ok", code: 200 };
 });
 
@@ -49,7 +49,7 @@ exports.resetBoard = functions.https.onCall((data, context) => {
     data: {},
   };
   for (let index = 0; index < width * height; index++) {
-    board.data[index] = { id: index, color: "#ffffff" };
+    board.data[index] = { id: index, colour: "#ffffff" };
   }
 
   admin.database().ref(`board${boardId}/`).set(board); // update the entire board
@@ -83,14 +83,14 @@ exports.changeLight = functions.https.onCall(async (data, context) => {
   if (!context.auth)
     return { status: "error", code: 401, message: "Not signed in" };
 
-  const { color, id } = data;
+  const { colour, id } = data;
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid;
 
   const action = {
     boardId: 0,
     squareId: id,
-    color: color,
+    colour: colour,
     time: new Date(),
   };
 
@@ -107,7 +107,7 @@ exports.changeLight = functions.https.onCall(async (data, context) => {
     return { status: "too-many", code: 429 }; // cooldown has not finished
   }
 
-  admin.database().ref(`lights/data/${id}`).set(color); // update the pixel
+  admin.database().ref(`lights/data/${id}`).set(colour); // update the pixel
   return { status: "ok", code: 200 };
 });
 

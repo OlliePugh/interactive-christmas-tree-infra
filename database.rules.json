@@ -1,6 +1,20 @@
 {
   "rules": {
-    ".read": "auth.uid !== null",
-    ".write": false
+    "lights": {
+      ".read": true,
+      ".write": false
+    },
+    "board1": {
+      ".read": true,
+      ".write": false
+    },
+    "board2": {
+      ".read": true,
+      ".write": false
+    },
+    "board3": {
+      ".read": true,
+      ".write": false
+    }
   }
 }
