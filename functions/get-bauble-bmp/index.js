@@ -1,3 +1,5 @@
+const bmp = require("bmp-js");
+
 const getBaubleBmp = async ({ admin, boardId }) => {
   const snapshot = await admin
     .database()
@@ -7,11 +9,18 @@ const getBaubleBmp = async ({ admin, boardId }) => {
   const data = snapshot.val();
   const pixels = [];
 
-  Object.entries(data).forEach(([id, { color }]) => {
-    pixels.push(Buffer.from(color.slice(1), "hex"));
+  Object.entries(data).forEach(([id, { colour }]) => {
+    const red = colour.slice(1, 3);
+    const green = colour.slice(3, 5);
+    const blue = colour.slice(5, 7);
+    pixels.push(Buffer.from("ff" + blue + green + red, "hex"));
   });
-  console.log(Buffer.concat(pixels));
-  return true;
+  const bmpData = {
+    data: Buffer.concat(pixels),
+    width: 160,
+    height: 124,
+  };
+  return bmp.encode(bmpData).data;
 };
 
 module.exports = getBaubleBmp;

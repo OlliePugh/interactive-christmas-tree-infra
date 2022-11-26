@@ -44,7 +44,12 @@ const _createCacheLights = async () => {
 // });
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
-  const byteResult = await getBaubleBmp({ admin, boardId: req.query.id });
-  console.log(byteResult);
-  res.sendStatus(200);
+  const boardId = req.query.id;
+  const byteResult = await getBaubleBmp({ admin, boardId });
+  res.writeHead(200, {
+    "Content-Type": "image/bmp",
+    "Content-disposition": `inline;filename=bauble${boardId}.bmp`,
+    "Content-Length": Buffer.byteLength(byteResult),
+  });
+  res.end(byteResult);
 });
