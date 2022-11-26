@@ -115,6 +115,15 @@ exports.changeLight = functions.https.onCall(async (data, context) => {
   return { status: "ok", code: 200 };
 });
 
+exports.getFullLights = functions.https.onRequest(async (req, res) => {
+  if (req.get("Authorization") !== secrets.lightsApiKey) {
+    res.sendStatus(401);
+    return;
+  }
+  const snapshot = await admin.database().ref(`lights/data`).once("value");
+  const data = snapshot.val();
+  res.status(200).send(JSON.stringify(data));
+});
 exports.createProfile = functions.auth.user().onCreate((user) => {
   const userObject = { actions: [] };
 
