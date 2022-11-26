@@ -1,5 +1,6 @@
 let functions = require("firebase-functions");
 const admin = require("firebase-admin");
+functions = functions.region("europe-west1");
 
 const hasCoolDownFinished = require("../has-cool-down-finished/index.js");
 

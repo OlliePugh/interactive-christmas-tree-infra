@@ -1,8 +1,10 @@
 let functions = require("firebase-functions");
+functions = functions.region("europe-west1");
 const admin = require("firebase-admin");
 const hasCoolDownFinished = require("../has-cool-down-finished/index.js");
 const config = require("../config.js");
 const axios = require("axios");
+const secrets = require("../secrets.js");
 
 const changeLight = functions.https.onCall(async (data, context) => {
   if (!context.auth)

@@ -1,5 +1,6 @@
 let functions = require("firebase-functions");
 const admin = require("firebase-admin");
+functions = functions.region("europe-west1");
 
 const resetBoard = functions.https.onCall((data, context) => {
   if (!context.auth || context.auth.uid !== "gtfpqsy1DLhy4AEndnsppYFFeH22")

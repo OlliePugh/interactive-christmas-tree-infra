@@ -1,4 +1,5 @@
 let functions = require("firebase-functions");
+functions = functions.region("europe-west1");
 const admin = require("firebase-admin");
 
 const resetLights = functions.https.onCall((data, context) => {
