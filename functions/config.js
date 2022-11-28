@@ -1,3 +1,3 @@
 module.exports = {
-  modifierCooldown: 60000,
+  modifierCooldown: 900, // slightly less than the client side
 };
