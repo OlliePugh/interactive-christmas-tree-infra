@@ -27,6 +27,7 @@ const changeLight = functions.https.onCall(async (data, context) => {
       admin,
       action,
       uid,
+      boardId: 0,
       modifierCooldown: config.modifierCooldown,
     });
   } catch (e) {

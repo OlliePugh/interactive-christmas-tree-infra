@@ -2,6 +2,7 @@ const hasCoolDownFinished = async ({
   admin,
   action,
   uid,
+  boardId,
   modifierCooldown,
 }) => {
   const userDocRef = admin.firestore().collection("user-actions").doc(uid);
@@ -14,7 +15,7 @@ const hasCoolDownFinished = async ({
     console.log("newAction", JSON.stringify(action));
     const sortedActions = userActionsDoc
       .data()
-      .actions.filter((act) => act.boardId === 0); // board ID is 0 for the lights
+      .actions.filter((act) => act.boardId === boardId); // board ID is 0 for the lights
 
     const mostRecentAction = sortedActions[sortedActions.length - 1];
     console.log("mostRecentAction", JSON.stringify(mostRecentAction));

@@ -18,7 +18,7 @@ const getBaubleBmp = async ({ admin, boardId }) => {
   const bmpData = {
     data: Buffer.concat(pixels),
     width: 160,
-    height: 124,
+    height: 128,
   };
   return bmp.encode(bmpData).data;
 };
