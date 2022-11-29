@@ -1,9 +1,10 @@
 let functions = require("firebase-functions");
 functions = functions.region("europe-west1");
 const admin = require("firebase-admin");
+const { adminUsers } = require("../config.js");
 
 const resetLights = functions.https.onCall((data, context) => {
-  if (!context.auth || context.auth.uid !== "gtfpqsy1DLhy4AEndnsppYFFeH22")
+  if (!context.auth || !adminUsers.includes(context.auth.uid))
     return { status: "error", code: 401, message: "Not signed in" };
   // hardcoded to just me for now
 
