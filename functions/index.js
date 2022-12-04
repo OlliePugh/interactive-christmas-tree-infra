@@ -49,8 +49,8 @@ const _baubleBmpCronJob = async (boardId) => {
   storeBaubleBmp(boardId, bmpData);
 };
 
-exports.baubleBmpCronJob = functions.pubsub
-  .schedule("* * * * *")
+exports.baubleBmpCronJob1 = functions.pubsub
+  .schedule("0 * * * *")
   .onRun(async () => {
     await Promise.all([
       _baubleBmpCronJob(1),
@@ -59,10 +59,60 @@ exports.baubleBmpCronJob = functions.pubsub
     ]);
   });
 
-// exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
-//   await _baubleBmpCronJob(req.query.id);
-//   res.sendStatus(200);
-// });
+exports.baubleBmpCronJob2 = functions.pubsub
+  .schedule("10 * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+exports.baubleBmpCronJob3 = functions.pubsub
+  .schedule("20 * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+exports.baubleBmpCronJob4 = functions.pubsub
+  .schedule("30 * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+exports.baubleBmpCronJob5 = functions.pubsub
+  .schedule("40 * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+exports.baubleBmpCronJob6 = functions.pubsub
+  .schedule("50 * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
+  await _baubleBmpCronJob(req.query.id);
+  res.sendStatus(200);
+});
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
   const boardId = req.query.id;
