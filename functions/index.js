@@ -2,6 +2,7 @@ let functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
 functions = functions.region("europe-west1");
+const storeBaubleBmp = require("./store-bauble-bmp");
 
 const getBaubleBmp = require("./get-bauble-bmp");
 
@@ -41,6 +42,26 @@ const _createCacheLights = async () => {
 
 // exports.baubleBmpCronJob = functions.pubsub.schedule("* * * * *").onRun(() => {
 //   getBaubleBmp();
+// });
+
+const _baubleBmpCronJob = async (boardId) => {
+  const bmpData = await getBaubleBmp({ admin, boardId });
+  storeBaubleBmp(boardId, bmpData);
+};
+
+exports.baubleBmpCronJob = functions.pubsub
+  .schedule("* * * * *")
+  .onRun(async () => {
+    await Promise.all([
+      _baubleBmpCronJob(1),
+      _baubleBmpCronJob(2),
+      _baubleBmpCronJob(3),
+    ]);
+  });
+
+// exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
+//   await _baubleBmpCronJob(req.query.id);
+//   res.sendStatus(200);
 // });
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {

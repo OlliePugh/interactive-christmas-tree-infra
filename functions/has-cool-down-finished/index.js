@@ -17,7 +17,7 @@ const hasCoolDownFinished = async ({
       .data()
       .actions.filter((act) => act.boardId === boardId); // board ID is 0 for the lights
 
-    const mostRecentAction = sortedActions[sortedActions.length - 1];
+    const mostRecentAction = sortedActions[sortedActions.length - 1]; // TODO solve this cause this will end up costing a lot
     console.log("mostRecentAction", JSON.stringify(mostRecentAction));
 
     if (mostRecentAction) {
@@ -33,11 +33,22 @@ const hasCoolDownFinished = async ({
       }
     }
 
+    const changesDocRef = admin.firestore().collection(`board${boardId}`).doc();
+
     // been over a minute let the user place it again
     console.log("Adding new action to the list of actions");
     await transaction.update(userDocRef, {
       actions: admin.firestore.FieldValue.arrayUnion(action),
     });
+
+    const change = {
+      squareId: action.squareId,
+      colour: action.colour,
+      time: new Date(),
+      uid,
+    };
+
+    await transaction.set(changesDocRef, change);
   });
 };
 
