@@ -11,6 +11,22 @@ const changeLight = functions.https.onCall(async (data, context) => {
     return { status: "error", code: 401, message: "Not signed in" };
 
   const { colour, id } = data;
+
+  if (!Object.values(config.fairyLightsColours).includes(colour)) {
+    return {
+      status: "error",
+      code: 401,
+      message: "Illegal colour - thanks for pointing this out rick roll man",
+    };
+  }
+
+  if (isNaN(id) || id < 0 || id >= 50) {
+    return {
+      status: "error",
+      code: 401,
+      message: "Invalid light id",
+    };
+  }
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid;
 

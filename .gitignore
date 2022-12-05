@@ -1,6 +1,8 @@
 # Secrets
 functions/secrets.js
 
+firebase-export-*
+
 # Logs
 emulator-data
 logs

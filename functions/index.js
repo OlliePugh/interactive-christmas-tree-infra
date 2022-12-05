@@ -109,10 +109,10 @@ exports.baubleBmpCronJob6 = functions.pubsub
     ]);
   });
 
-exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
-  await _baubleBmpCronJob(req.query.id);
-  res.sendStatus(200);
-});
+// exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
+//   await _baubleBmpCronJob(req.query.id);
+//   res.sendStatus(200);
+// });
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
   const boardId = req.query.id;
