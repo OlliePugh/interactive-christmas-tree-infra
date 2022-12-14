@@ -8,7 +8,7 @@ const config = require("../config.js");
 const hasCoolDownFinished = require("../has-cool-down-finished/index.js");
 
 const changeSquare = functions.https.onCall(async (data, context) => {
-  if (!context.auth)
+  if (!context.auth || (await admin.auth().getUser(context.auth.uid)).disabled)
     return { status: "error", code: 401, message: "Not signed in" };
 
   const { colour, id, boardId } = data;
