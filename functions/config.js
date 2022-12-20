@@ -10,6 +10,7 @@ const fairyLightsColours = {
 };
 
 const baubleColours = {
+  c0: "#6d001a",
   c1: "#ff4500",
   c2: "#ffa800",
   c3: "#ffd635",
@@ -21,15 +22,17 @@ const baubleColours = {
   c9: "#811e9f",
   c10: "#b44ac0",
   c11: "#ff99aa",
-  c12: "#9c6926",
-  c13: "#000000",
-  c14: "#898d90",
-  c15: "#d4d7d9",
-  c16: "#ffffff",
+  c12: "#ffb470",
+  c13: "#9c6926",
+  c14: "#6d482f",
+  c15: "#000000",
+  c16: "#898d90",
+  c17: "#d4d7d9",
+  c18: "#ffffff",
 };
 
 module.exports = {
-  modifierCooldown: 900, // slightly less than the client side
+  modifierCooldown: 2_600, // slightly less than the client side
   adminUsers: ["U5DMD4OnBbajbX2hCfXzML6LPm43"],
   fairyLightsColours,
   baubleColours,

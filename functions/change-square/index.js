@@ -38,13 +38,16 @@ const changeSquare = functions.https.onCall(async (data, context) => {
   };
 
   console.log("Starting transaction");
+  // admins don't have to abide by cooldown
   try {
     await hasCoolDownFinished({
       admin,
       action,
       uid,
       boardId,
-      modifierCooldown: config.modifierCooldown,
+      modifierCooldown: config.adminUsers.includes(context.auth.uid)
+        ? 0
+        : config.modifierCooldown,
     });
   } catch (e) {
     console.error(e);
