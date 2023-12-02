@@ -1,6 +1,11 @@
 let functions = require("firebase-functions");
 const admin = require("firebase-admin");
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp({
+  ...functions.config().firebase,
+  databaseURL:
+    "https://interactive-christmas-tree.europe-west1.firebasedatabase.app/",
+  storageBucket: "real-world-games.appspot.com",
+});
 functions = functions.region("europe-west1");
 
 // const getBaubleBmp = require("./get-bauble-bmp");
