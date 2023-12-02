@@ -1,6 +1,11 @@
 let functions = require("firebase-functions");
 const admin = require("firebase-admin");
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp({
+  ...functions.config().firebase,
+  databaseURL:
+    "https://interactive-christmas-tree.europe-west1.firebasedatabase.app/",
+  storageBucket: "real-world-games.appspot.com",
+});
 functions = functions.region("europe-west1");
 const storeBaubleBmp = require("./store-bauble-bmp");
 
@@ -15,8 +20,6 @@ exports.resetLights = require("./reset-lights/index.js");
 exports.changeLight = require("./change-light/index.js");
 
 exports.getFullLights = require("./get-full-lights/index.js");
-
-exports.createProfile = require("./create-profile");
 
 const _createCacheLights = async () => {
   const snapshot = await admin.database().ref(`lights/data`).once("value");

@@ -4,8 +4,9 @@ const admin = require("firebase-admin");
 const { adminUsers } = require("../config.js");
 
 const resetLights = functions.https.onCall((data, context) => {
-  if (!context.auth || !adminUsers.includes(context.auth.uid))
+  if (!context.auth || !adminUsers.includes(context.auth.uid)) {
     return { status: "error", code: 401, message: "Not signed in" };
+  }
   // hardcoded to just me for now
 
   const { length } = data;
@@ -20,7 +21,7 @@ const resetLights = functions.https.onCall((data, context) => {
     lights.data[index] = "#ffffff";
   }
 
-  admin.database().ref(`lights/`).set(lights); // update the entire board
+  admin.database().ref("lights/").set(lights); // update the entire board
 
   return { status: "ok", code: 200 };
 });
