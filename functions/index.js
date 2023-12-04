@@ -1,5 +1,6 @@
 let functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { defineSecret } = require("firebase-functions/params");
 admin.initializeApp({
   ...functions.config().firebase,
   databaseURL:
@@ -20,6 +21,8 @@ exports.resetLights = require("./reset-lights/index.js");
 exports.changeLight = require("./change-light/index.js");
 
 exports.getFullLights = require("./get-full-lights/index.js");
+
+exports.postTweet = require("./post-tweet/index.js");
 
 const _createCacheLights = async () => {
   const snapshot = await admin.database().ref(`lights/data`).once("value");

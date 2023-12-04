@@ -1,6 +1,6 @@
 # Secrets
 functions/secrets.js
-
+**/.env*
 firebase-export-*
 
 # Logs
