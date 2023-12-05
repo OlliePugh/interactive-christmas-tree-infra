@@ -22,8 +22,6 @@ exports.changeLight = require("./change-light/index.js");
 
 exports.getFullLights = require("./get-full-lights/index.js");
 
-exports.postTweet = require("./post-tweet/index.js");
-
 const _createCacheLights = async () => {
   const snapshot = await admin.database().ref(`lights/data`).once("value");
   const data = snapshot.val();
