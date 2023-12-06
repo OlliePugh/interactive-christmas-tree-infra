@@ -14,6 +14,8 @@ const getBaubleBmp = require("./get-bauble-bmp");
 
 exports.changeSquare = require("./change-square/index.js");
 
+exports.changeBulk = require("./change-bulk/index.js");
+
 exports.resetBoard = require("./reset-board/index.js");
 
 exports.resetLights = require("./reset-lights/index.js");
