@@ -56,16 +56,16 @@ const _baubleBmpCronJob = async (boardId) => {
   await storeBaubleJpeg(boardId, bmpData);
 };
 
-exports.testBmpCronJob = functions.https.onRequest(async (req, res) => {
-  const promises = [
-    _baubleBmpCronJob(1),
-    _baubleBmpCronJob(2),
-    _baubleBmpCronJob(3),
-  ];
-  await Promise.all(promises);
+// exports.testBmpCronJob = functions.https.onRequest(async (req, res) => {
+//   const promises = [
+//     _baubleBmpCronJob(1),
+//     _baubleBmpCronJob(2),
+//     _baubleBmpCronJob(3),
+//   ];
+//   await Promise.all(promises);
 
-  res.sendStatus(200);
-});
+//   res.sendStatus(200);
+// });
 
 exports.baubleBmpCronJob1 = functions.pubsub
   .schedule("0 * * * *")

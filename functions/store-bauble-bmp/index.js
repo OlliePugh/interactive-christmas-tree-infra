@@ -19,8 +19,8 @@ const storeData = (filename, data, contentType) => {
 const storeBaubleJpeg = async (boardId, data) => {
   const image = await Jimp.read(data);
   const resized = image.resize(640, 480);
-  const jpeg = resized.getBufferAsync(Jimp.MIME_JPEG);
+  const jpeg = await resized.getBufferAsync(Jimp.MIME_JPEG);
   storeData(`board${boardId}.jpeg`, jpeg, Jimp.MIME_JPEG);
 };
 
-module.exports = { storeBaubleBpm: storeBaubleBmp, storeBaubleJpeg };
+module.exports = { storeBaubleBmp, storeBaubleJpeg };
