@@ -8,7 +8,7 @@ admin.initializeApp({
   storageBucket: "real-world-games.appspot.com",
 });
 functions = functions.region("europe-west1");
-const storeBaubleBmp = require("./store-bauble-bmp");
+const { storeBaubleBmp, storeBaubleJpeg } = require("./store-bauble-bmp");
 
 const getBaubleBmp = require("./get-bauble-bmp");
 
@@ -53,7 +53,19 @@ const _createCacheLights = async () => {
 const _baubleBmpCronJob = async (boardId) => {
   const bmpData = await getBaubleBmp({ admin, boardId });
   storeBaubleBmp(boardId, bmpData);
+  await storeBaubleJpeg(boardId, bmpData);
 };
+
+// exports.testBmpCronJob = functions.https.onRequest(async (req, res) => {
+//   const promises = [
+//     _baubleBmpCronJob(1),
+//     _baubleBmpCronJob(2),
+//     _baubleBmpCronJob(3),
+//   ];
+//   await Promise.all(promises);
+
+//   res.sendStatus(200);
+// });
 
 exports.baubleBmpCronJob1 = functions.pubsub
   .schedule("0 * * * *")
@@ -114,11 +126,6 @@ exports.baubleBmpCronJob6 = functions.pubsub
       _baubleBmpCronJob(3),
     ]);
   });
-
-// exports.testbaubleBmpCronJob = functions.https.onRequest(async (req, res) => {
-//   await _baubleBmpCronJob(req.query.id);
-//   res.sendStatus(200);
-// });
 
 exports.getBaubleBmp = functions.https.onRequest(async (req, res) => {
   const boardId = req.query.id;
